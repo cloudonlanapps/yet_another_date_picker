@@ -53,18 +53,18 @@ class DateSelector extends ConsumerWidget {
             ],
           ),
           width: 240 + 8 * 2 + 20,
-          height: kMinInteractiveDimension * 2,
+          height: kMinInteractiveDimension * 5,
           child: const Stack(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  DayWheel(),
-                  MonthWheel(),
-                  YearWheel(),
+                  DayWheel(width: 40, height: 120),
+                  MonthWheel(width: 120, height: 120),
+                  YearWheel(width: 80, height: 120),
                 ],
               ),
-              Positioned(right: 0, bottom: 0, child: ResetIcon())
+              Positioned(top: 0, right: 0, child: ResetIcon())
             ],
           ),
         ),
@@ -90,7 +90,7 @@ class ResetIcon extends ConsumerWidget {
                 ref.read(datePickerNotifierProvider.notifier).onReset();
               },
               child: Icon(
-                Icons.restart_alt_outlined,
+                Icons.restart_alt_rounded,
                 color: Theme.of(context).colorScheme.primary,
               )),
         ),
@@ -100,7 +100,14 @@ class ResetIcon extends ConsumerWidget {
 }
 
 class DayWheel extends ConsumerWidget {
-  const DayWheel({super.key});
+  final double height;
+  final double width;
+
+  const DayWheel({
+    super.key,
+    required this.height,
+    required this.width,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -111,7 +118,8 @@ class DayWheel extends ConsumerWidget {
     });
     return ListWheel(
         picker: picker,
-        width: 40,
+        width: width,
+        height: height,
         onSelection: (value) {
           ref.read(datePickerNotifierProvider.notifier).onChangeDD(value);
         });
@@ -119,7 +127,13 @@ class DayWheel extends ConsumerWidget {
 }
 
 class MonthWheel extends ConsumerWidget {
-  const MonthWheel({super.key});
+  const MonthWheel({
+    super.key,
+    required this.height,
+    required this.width,
+  });
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -130,7 +144,8 @@ class MonthWheel extends ConsumerWidget {
     });
     return ListWheel(
         picker: picker,
-        width: 120,
+        width: width,
+        height: height,
         onSelection: (value) {
           ref.read(datePickerNotifierProvider.notifier).onChangeMM(value);
         });
@@ -138,7 +153,13 @@ class MonthWheel extends ConsumerWidget {
 }
 
 class YearWheel extends ConsumerWidget {
-  const YearWheel({super.key});
+  const YearWheel({
+    super.key,
+    required this.height,
+    required this.width,
+  });
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -150,7 +171,8 @@ class YearWheel extends ConsumerWidget {
     });
     return ListWheel(
         picker: picker,
-        width: 80,
+        width: width,
+        height: height,
         onSelection: (value) {
           ref.read(datePickerNotifierProvider.notifier).onChangeYY(value);
         });

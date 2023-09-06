@@ -23,10 +23,7 @@ class XXPicker<T> {
       .toList();
 
   T? get selectedValue => items[index];
-
   String get selectedLabel => labels[index];
-
-  List<String> get labels3 => [...labels, ...labels, ...labels];
 
   XXPicker<T> copyWith({
     int? index,
@@ -48,8 +45,8 @@ class XXPicker<T> {
   }
 
   scrollTo() {
-    if (index == controller.selectedItem % items.length) return;
-    controller.jumpToItem(index + items.length);
+    if (index == controller.selectedItem) return;
+    controller.jumpToItem(index);
   }
 
   factory XXPicker({
@@ -61,8 +58,7 @@ class XXPicker<T> {
       name: name,
       index: index,
       items: items,
-      controller:
-          FixedExtentScrollController(initialItem: index + items.length),
+      controller: FixedExtentScrollController(initialItem: index),
     );
   }
 }

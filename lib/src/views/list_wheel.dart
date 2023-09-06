@@ -14,8 +14,8 @@ class ListWheel extends ConsumerWidget {
   const ListWheel({
     super.key,
     required this.picker,
-    this.height = kMinInteractiveDimension * 2,
-    this.width = kMinInteractiveDimension,
+    required this.height,
+    required this.width,
     this.focusColor,
     this.focusTextColor,
     this.onSelection,
@@ -23,52 +23,67 @@ class ListWheel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final items = picker.labels;
-
     return Center(
       child: Container(
         decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
-        height: height,
+        height: height * 5,
         width: width,
         child: ListWheelScrollView.useDelegate(
-          overAndUnderCenterOpacity: 0.5,
-          squeeze: 1.1,
-          controller: picker.controller,
-          itemExtent: height * 0.5,
-          diameterRatio: 2.0,
-          physics: const FixedExtentScrollPhysics(),
-          onSelectedItemChanged: (value) {
-            final absoluteValue = value % items.length;
-            picker.controller.jumpToItem(absoluteValue + items.length);
-            if (picker.index != absoluteValue) {
-              onSelection?.call(value % items.length);
-            }
-          },
-          childDelegate: ListWheelChildBuilderDelegate(
-              childCount: items.length * 3, // Create extra items for looping
-              builder: (BuildContext context, int index) {
-                final adjustedIndex = index % items.length;
-                final selected = picker.index == adjustedIndex;
-
-                return CustCard(
-                  height: height,
-                  width: width,
-                  label: picker.labels3[index],
-                  alignment: Alignment.center,
-                  backgroundColor: selected
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.secondaryContainer,
-                  textStyle: TextStyle(
-                      fontWeight: selected ? FontWeight.bold : null,
-                      color: selected
-                          ? Theme.of(context).colorScheme.error
-                          : null),
+            overAndUnderCenterOpacity: 0.5,
+            squeeze: 1.1,
+            controller: picker.controller,
+            itemExtent: height * 0.5,
+            diameterRatio: 4.0,
+            physics: const FixedExtentScrollPhysics(),
+            onSelectedItemChanged: (value) {
+              if (picker.index != value) {
+                onSelection?.call(value);
+              }
+            },
+            childDelegate: ListWheelChildLoopingListDelegate(children: [
+              ...picker.items.map((e) {
+                final myIndex = picker.items.indexOf(e);
+                final selected = myIndex == picker.index;
+                return GestureDetector(
+                  onTap: selected
+                      ? null
+                      : () {
+                          onSelection?.call(myIndex);
+                        },
+                  child: CustCard(
+                    label: picker.labels[myIndex],
+                    height: height,
+                    width: width,
+                    alignment: Alignment.center,
+                    backgroundColor: selected
+                        ? Theme.of(context).colorScheme.primaryContainer
+                        : Theme.of(context).colorScheme.secondaryContainer,
+                    textStyle: TextStyle(
+                        fontWeight: selected ? FontWeight.bold : null,
+                        color: selected
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.secondary),
+                  ),
                 );
-              }),
-        ),
+              }).toList()
+            ])),
       ),
     );
   }
 }
+
+/**
+ * 
+ * (BuildContext context, int index) {
+                final adjustedIndex = index % items.length;
+                final selected = picker.index == adjustedIndex;
+
+                return CustCard(
+                  
+                  label: picker.labels[index],
+                  
+                );
+              })
+ */

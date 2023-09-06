@@ -41,6 +41,7 @@ class DatePickerNotifier extends StateNotifier<DatePicker> {
 
   onReset() {
     state = state.onReset();
+    onDateChange(state.ddmmyyyy);
   }
 }
 
