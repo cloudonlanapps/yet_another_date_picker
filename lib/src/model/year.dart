@@ -4,10 +4,7 @@ import 'dart:collection';
 class Year {
   final int value;
 
-  /// This software require past dates, can't have future dates
-  /// Debatable ???
-
-  Year(int value) : value = min(max(value, 1970), DateTime.now().year);
+  Year(int value) : value = max(value, 1970);
 
   bool get isLeapYear =>
       (value % 4 == 0) && (value % 100 != 0) || (value % 400 == 0);
@@ -47,6 +44,12 @@ extension FindIndex on List<Year?> {
     if (year == null) return null;
     final index =
         indexWhere((y) => (y != null) ? y.value == year.value : false);
+    return (index == -1) ? null : index;
+  }
+
+  int? getIndexOfByInt(int? year) {
+    if (year == null) return null;
+    final index = indexWhere((y) => (y != null) ? y.value == year : false);
     return (index == -1) ? null : index;
   }
 

@@ -8,29 +8,37 @@ class DatePicker {
   final XXPicker<int?> ddPicker;
   final XXPicker<String> mmPicker;
   final XXPicker<Year?> yyPicker;
+  final DDMMYYYY initialValue;
 
   DatePicker._(
-      {required this.ddPicker, required this.mmPicker, required this.yyPicker});
+      {required this.ddPicker,
+      required this.mmPicker,
+      required this.yyPicker,
+      required this.initialValue});
 
-  factory DatePicker({required List<int> years}) {
+  factory DatePicker({
+    required List<int> years,
+    required DDMMYYYY initialValue,
+  }) {
     final List<Year?> yearsSorted = [
       null, // For Any
       ...years.map((e) => Year(e)).toList()
         ..sort((a, b) => a.value.compareTo(b.value)),
     ];
 
-    final int dd = DateTime.now().day;
-    final int mm = DateTime.now().month - 1; // Indexed from 0
-    final int yy = yearsSorted.length - 1;
+    final int dd = (initialValue.dd == null) ? 0 : initialValue.dd!;
+    final int mm = initialValue.mm; // Indexed from 0
+    final int yy = yearsSorted.getIndexOfByInt(initialValue.yyyy) ??
+        yearsSorted.length - 1;
 
     final List<int?> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
 
     return DatePicker._(
-      ddPicker: XXPicker<int?>(name: "day", index: dd, items: days),
-      mmPicker:
-          XXPicker<String>(name: " month", index: mm, items: monthsOfTheYear),
-      yyPicker: XXPicker<Year?>(name: "year", index: yy, items: yearsSorted),
-    );
+        ddPicker: XXPicker<int?>(name: "day", index: dd, items: days),
+        mmPicker:
+            XXPicker<String>(name: " month", index: mm, items: monthsOfTheYear),
+        yyPicker: XXPicker<Year?>(name: "year", index: yy, items: yearsSorted),
+        initialValue: initialValue);
   }
   DatePicker copyWith({
     XXPicker<int?>? ddPicker,
@@ -38,10 +46,10 @@ class DatePicker {
     XXPicker<Year?>? yyPicker,
   }) {
     return DatePicker._(
-      ddPicker: ddPicker ?? this.ddPicker,
-      mmPicker: mmPicker ?? this.mmPicker,
-      yyPicker: yyPicker ?? this.yyPicker,
-    );
+        ddPicker: ddPicker ?? this.ddPicker,
+        mmPicker: mmPicker ?? this.mmPicker,
+        yyPicker: yyPicker ?? this.yyPicker,
+        initialValue: initialValue);
   }
 
   DDMMYYYY get ddmmyyyy {
@@ -138,5 +146,21 @@ class DatePicker {
           items: days, index: min(this.ddPicker.index, days.length - 1));
     }
     return copyWith(ddPicker: ddPicker, yyPicker: yyPicker);
+  }
+
+  DatePicker onReset() {
+    final List<Year?> yearsSorted = yyPicker.items;
+
+    final int dd = (initialValue.dd == null) ? 0 : initialValue.dd!;
+    final int mm = initialValue.mm; // Indexed from 0
+    final int yy = yearsSorted.getIndexOfByInt(initialValue.yyyy) ??
+        yearsSorted.length - 1;
+
+    final List<int?> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
+
+    return copyWith(
+        ddPicker: ddPicker.copyWith(index: dd, items: days),
+        mmPicker: mmPicker.copyWith(index: mm),
+        yyPicker: yyPicker.copyWith(index: yy));
   }
 }

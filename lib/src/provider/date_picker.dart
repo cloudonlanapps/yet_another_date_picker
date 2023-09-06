@@ -13,7 +13,7 @@ class DatePickerNotifier extends StateNotifier<DatePicker> {
     required List<int> years,
     required this.initialDate,
     required this.onDateChange,
-  }) : super(DatePicker(years: years));
+  }) : super(DatePicker(years: years, initialValue: initialDate));
   void onChangeDD(int dd) {
     if (state.ddPicker.index == dd || updateType != UpdateType.none) return;
 
@@ -37,6 +37,10 @@ class DatePickerNotifier extends StateNotifier<DatePicker> {
     state = state.onChangeYY(yy);
     onDateChange(state.ddmmyyyy);
     updateType = UpdateType.none;
+  }
+
+  onReset() {
+    state = state.onReset();
   }
 }
 

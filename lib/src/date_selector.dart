@@ -52,18 +52,49 @@ class DateSelector extends ConsumerWidget {
               )
             ],
           ),
-          width: 240 + 8 * 2,
+          width: 240 + 8 * 2 + 20,
           height: kMinInteractiveDimension * 2,
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: const Stack(
             children: [
-              DayWheel(),
-              MonthWheel(),
-              YearWheel(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DayWheel(),
+                  MonthWheel(),
+                  YearWheel(),
+                ],
+              ),
+              Positioned(right: 0, bottom: 0, child: ResetIcon())
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class ResetIcon extends ConsumerWidget {
+  const ResetIcon({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Tooltip(
+          message: "Restore original date",
+          child: GestureDetector(
+              onTap: () {
+                ref.read(datePickerNotifierProvider.notifier).onReset();
+              },
+              child: Icon(
+                Icons.restart_alt_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              )),
+        ),
+      ],
     );
   }
 }

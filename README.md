@@ -62,7 +62,7 @@ As the years are provided in a list, instead of range, it is possible to skip th
 ## Additional information
 
 ## Planned enhancements
-- [ ] Have an option to move back to initial date
+- [X] Have an option to move back to initial date
 - [ ] Provide an option to select from table when tapping on the wheel
 - [ ] Provide a standard calander interface 
 - [ ] Support weekday when year and day are present
