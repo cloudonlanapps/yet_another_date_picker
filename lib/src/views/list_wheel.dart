@@ -35,7 +35,7 @@ class ListWheel extends ConsumerWidget {
             squeeze: 1.1,
             controller: picker.controller,
             itemExtent: height * 0.5,
-            diameterRatio: 4.0,
+            diameterRatio: 2.0,
             physics: const FixedExtentScrollPhysics(),
             onSelectedItemChanged: (value) {
               if (picker.index != value) {
@@ -63,7 +63,7 @@ class ListWheel extends ConsumerWidget {
                     textStyle: TextStyle(
                         fontWeight: selected ? FontWeight.bold : null,
                         color: selected
-                            ? Theme.of(context).colorScheme.error
+                            ? Theme.of(context).colorScheme.primary
                             : Theme.of(context).colorScheme.secondary),
                   ),
                 );
@@ -73,17 +73,3 @@ class ListWheel extends ConsumerWidget {
     );
   }
 }
-
-/**
- * 
- * (BuildContext context, int index) {
-                final adjustedIndex = index % items.length;
-                final selected = picker.index == adjustedIndex;
-
-                return CustCard(
-                  
-                  label: picker.labels[index],
-                  
-                );
-              })
- */
