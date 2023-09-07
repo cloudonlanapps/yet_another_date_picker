@@ -42,12 +42,9 @@ class CustCard extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                   vertical: max(height * 0.02, 1.0),
                   horizontal: max(width * 0.02, 1.0)),
-              child: FittedBox(
-                fit: BoxFit.fitHeight,
-                child: Text(
-                  label,
-                  style: textStyle,
-                ),
+              child: Text(
+                label,
+                style: textStyle,
               ),
             ),
           )),
