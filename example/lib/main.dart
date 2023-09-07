@@ -40,29 +40,34 @@ class _MyAppState extends State<MyApp> {
                   const SizedBox(height: 20),
                   const DateSelectorWrapper(),
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text.rich(TextSpan(
-                        style: Theme.of(context).textTheme.bodyLarge!,
-                        children: [
-                          TextSpan(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                              text: "Select date\n"),
-                          const TextSpan(
-                            text: "(from the years provided)\n",
-                          ),
-                          const TextSpan(
-                              text:
-                                  "* If the day is any, it selects a month\n"),
-                          const TextSpan(
-                              text: "* If the year is null, it represents "
-                                  "the specific day from any year\n"),
-                          const TextSpan(
-                              text: "* Can't have both day and year empty\n"),
-                        ])),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text.rich(TextSpan(
+                            style: Theme.of(context).textTheme.bodyLarge!,
+                            children: [
+                              TextSpan(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                  text: "Select date\n"),
+                              const TextSpan(
+                                text: "(from the years provided)\n",
+                              ),
+                              const TextSpan(
+                                  text:
+                                      "* If the day is any, it selects a month\n"),
+                              const TextSpan(
+                                  text: "* If the year is null, it represents "
+                                      "the specific day from any year\n"),
+                              const TextSpan(
+                                  text:
+                                      "* Can't have both day and year empty\n"),
+                            ])),
+                      ),
+                    ),
                   )
                 ],
               ),
