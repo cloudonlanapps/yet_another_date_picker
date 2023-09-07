@@ -48,7 +48,15 @@ class ListWheel extends ConsumerWidget {
                 final selected = myIndex == picker.index;
                 return GestureDetector(
                   onTap: selected
-                      ? null
+                      ? () => showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return GridViewSelector(
+                                picker: picker,
+                                onSelection: onSelection,
+                              );
+                            },
+                          )
                       : () {
                           onSelection?.call(myIndex);
                         },
@@ -70,6 +78,92 @@ class ListWheel extends ConsumerWidget {
               }).toList()
             ])),
       ),
+    );
+  }
+}
+
+class GridViewSelector extends ConsumerWidget {
+  final XXPicker picker;
+  final Function(int index)? onSelection;
+  const GridViewSelector({
+    super.key,
+    required this.picker,
+    this.onSelection,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: Card(
+          shadowColor: Theme.of(context).colorScheme.secondaryContainer,
+          color: Theme.of(context).colorScheme.primaryContainer,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.spaceAround,
+                  spacing: 2.0,
+                  runSpacing: 4.0,
+                  children: [
+                    for (var i = 0; i < picker.items.length; i++)
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                          chipTheme: ChipThemeData(
+                            backgroundColor: Colors
+                                .transparent, // Set background color to be transparent
+                            disabledColor: Colors
+                                .transparent, // Set disabled color to be transparent
+                            selectedColor: Colors
+                                .transparent, // Set selected color to be transparent
+                            secondaryLabelStyle: const TextStyle(
+                                color: Colors.black), // Set label color
+                            labelStyle: const TextStyle(
+                                color: Colors.black), // Set label color
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide.none,
+                              // Define the shape
+                              borderRadius: BorderRadius.circular(
+                                  0), // Set border radius to 0 for no border
+                            ),
+                          ),
+                        ),
+                        child: ActionChip(
+                          onPressed: () {
+                            onSelection?.call(i);
+                            Navigator.pop(context, true);
+                          },
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                          shape: const StadiumBorder(side: BorderSide.none),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          label: Text(
+                            picker.labels[i],
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          labelPadding:
+                              const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                      )
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text("Cancel")),
+                  ),
+                )
+              ],
+            ),
+          )),
     );
   }
 }

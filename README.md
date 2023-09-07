@@ -63,7 +63,9 @@ As the years are provided in a list, instead of range, it is possible to skip th
 
 ## Planned enhancements
 - [X] Have an option to move back to initial date
-- [ ] Provide an option to select from table when tapping on the wheel
-- [ ] Provide a standard calander interface 
-- [ ] Support weekday when year and day are present
-
+- [X] Provide an option to select from table when tapping on the wheel
+~~- [ ] Provide a standard calander interface~~ Not required
+- [X] Support weekday when year and day are present
+      - Added DDMMYYYY.toDateTime, when it is not null, the weekday can be obtained from the package `intl` `DateFormat('EEEE').format(date);`
+- [ ] Allow UI to disable either day or year.
+- [ ] Option to set, heigth and width from outside.
