@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DefaultTextStyle(
-                      style: Theme.of(context).textTheme.displaySmall!,
+                      style: Theme.of(context).textTheme.bodyMedium!,
                       child: const DateSelected()),
                   const SizedBox(height: 20),
                   const DateSelectorWrapper(),
