@@ -11,7 +11,9 @@ class MenuItemView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: item.onTap,
-      child: Icon(item.iconData, size: 28, color: item.iconColor),
+      child: Tooltip(
+          message: item.tooltip,
+          child: Icon(item.iconData, size: 28, color: item.iconColor)),
     );
   }
 }

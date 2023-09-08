@@ -152,7 +152,7 @@ class _DateSelector extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   MenuItem(
-                    tooltip: '',
+                    tooltip: 'Enable/Disable Day Selection',
                     iconData: Icons.toggle_off,
                     iconColor: theme.iconColor,
                     width: childWidth / 6,
@@ -161,7 +161,7 @@ class _DateSelector extends ConsumerWidget {
                         .toggleDisable(pickerID: PickerID.datePicker),
                   ),
                   MenuItem(
-                    tooltip: '',
+                    tooltip: 'Restore',
                     iconData: Icons.restart_alt,
                     iconColor: theme.iconColor,
                     width: childWidth * 3 / 6,
@@ -169,7 +169,7 @@ class _DateSelector extends ConsumerWidget {
                         ref.read(datePickerNotifierProvider.notifier).onReset(),
                   ),
                   MenuItem(
-                    tooltip: '',
+                    tooltip: 'Enable/Disable Year Selection',
                     iconData: Icons.toggle_on,
                     iconColor: theme.iconColor,
                     width: childWidth * 2 / 6,
