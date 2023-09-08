@@ -39,19 +39,23 @@ class PickerView extends ConsumerWidget {
 
     return Center(
       child: Stack(
-        alignment: AlignmentDirectional.topCenter,
         children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: bottomPadding),
-            child: ListWheel(
-              picker: picker,
-              width: width,
-              height: height - bottomPadding,
-              itemExtent: itemExtent,
-              onSelection:
-                  ref.read(datePickerNotifierProvider.notifier).onChange,
-              theme: theme,
-            ),
+          SizedBox(
+            height: height,
+            width: width,
+          ),
+          /* Container(
+            height: height,
+            width: width,
+            decoration: BoxDecoration(border: Border.all(width: 0.25)),
+          ), */
+          ListWheel(
+            picker: picker,
+            width: width,
+            height: height,
+            itemExtent: itemExtent,
+            onSelection: ref.read(datePickerNotifierProvider.notifier).onChange,
+            theme: theme,
           ),
           if (picker.isDisabled)
             SizedBox(
@@ -68,24 +72,6 @@ class PickerView extends ConsumerWidget {
                     )),
               ),
             ),
-          if (allowDisable)
-            Positioned(
-                bottom: 0,
-                child: Tooltip(
-                  message:
-                      "${picker.isDisabled ? "Select" : "Ignore"} ${picker.pickerID == PickerID.datePicker ? "Day" : "Year"}",
-                  child: GestureDetector(
-                    onTap: () {
-                      ref
-                          .read(datePickerNotifierProvider.notifier)
-                          .toggleDisable(pickerID: picker.pickerID);
-                    },
-                    child: Icon(
-                      picker.isDisabled ? Icons.toggle_off : Icons.toggle_on,
-                      color: theme.iconColor,
-                    ),
-                  ),
-                ))
         ],
       ),
     );

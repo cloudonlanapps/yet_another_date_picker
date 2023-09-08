@@ -12,21 +12,17 @@ class ResetIcon extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Tooltip(
-          message: "Restore original date",
-          child: GestureDetector(
-              onTap: () {
-                ref.read(datePickerNotifierProvider.notifier).onReset();
-              },
-              child: Icon(
-                Icons.restart_alt_rounded,
-                color: color,
-              )),
-        ),
-      ],
+    return Tooltip(
+      message: "Restore original date",
+      child: GestureDetector(
+          onTap: () {
+            ref.read(datePickerNotifierProvider.notifier).onReset();
+          },
+          child: Icon(
+            size: 24,
+            Icons.restart_alt,
+            color: color,
+          )),
     );
   }
 }

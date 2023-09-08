@@ -26,7 +26,7 @@ class ItemView extends StatelessWidget {
       width: width,
       height: height,
       child: Card(
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: backgroundColor,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(2.0),
