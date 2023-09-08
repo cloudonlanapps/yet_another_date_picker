@@ -6,7 +6,7 @@ enum PickerID {
   yearPicker,
 }
 
-class XXPicker<T> {
+class Selector<T> {
   final PickerID pickerID;
   final int index;
   final List<T> items;
@@ -15,7 +15,7 @@ class XXPicker<T> {
   final String Function(T value) toStringFormatted;
   final bool isDisabled;
 
-  XXPicker._({
+  Selector._({
     required this.pickerID,
     required this.index,
     required this.items,
@@ -24,13 +24,13 @@ class XXPicker<T> {
     required this.toStringFormatted,
   });
 
-  factory XXPicker(
+  factory Selector(
       {required PickerID pickerID,
       required int index,
       required List<T> items,
       bool? isDisabled,
       String Function(T value)? toStringFormatted}) {
-    return XXPicker._(
+    return Selector._(
         pickerID: pickerID,
         index: index,
         items: items,
@@ -39,7 +39,7 @@ class XXPicker<T> {
         toStringFormatted: toStringFormatted ?? (T value) => value.toString());
   }
 
-  XXPicker<T> copyWith({
+  Selector<T> copyWith({
     int? index,
     List<T>? items,
     bool? isDisabled,
@@ -49,7 +49,7 @@ class XXPicker<T> {
 
     index_ = (index_ > items_.length) ? items_.length - 1 : index_;
 
-    final p = XXPicker._(
+    final p = Selector._(
         pickerID: pickerID,
         index: index_,
         items: items_,
@@ -76,7 +76,7 @@ class XXPicker<T> {
   T? get selectedValue => isDisabled ? null : items[index];
   String get selectedLabel => isDisabled ? "" : labels[index];
 
-  XXPicker<T> toggleDisable() {
+  Selector<T> toggleDisable() {
     return copyWith(isDisabled: !isDisabled);
   }
 }

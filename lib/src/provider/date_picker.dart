@@ -6,7 +6,7 @@ import '../ddmmyyyy.dart';
 
 enum UpdateType { none, date, month, year }
 
-class DatePickerNotifier extends StateNotifier<DatePicker> {
+class DatePickerNotifier extends StateNotifier<DateSelector> {
   bool isUpdating = false;
   final void Function(DDMMYYYY ddmmyyyy) onDateChange;
   final DDMMYYYY initialDate;
@@ -17,7 +17,7 @@ class DatePickerNotifier extends StateNotifier<DatePicker> {
     required this.onDateChange,
     bool allowDisableDaySelection = true,
     bool allowDisableYearSelection = true,
-  }) : super(DatePicker(
+  }) : super(DateSelector(
           years: years,
           initialValue: initialDate,
           allowDisableDaySelection: allowDisableDaySelection,
@@ -58,6 +58,6 @@ class DatePickerNotifier extends StateNotifier<DatePicker> {
 }
 
 final datePickerNotifierProvider =
-    StateNotifierProvider<DatePickerNotifier, DatePicker>((ref) {
+    StateNotifierProvider<DatePickerNotifier, DateSelector>((ref) {
   throw Exception("Can't access outside Module");
 });

@@ -4,16 +4,16 @@ import '../ddmmyyyy.dart';
 import 'year.dart';
 import 'picker.dart';
 
-class DatePicker {
-  late final Map<PickerID, XXPicker> pickers;
+class DateSelector {
+  late final Map<PickerID, Selector> pickers;
   final DDMMYYYY initialValue;
   final bool allowDisableDaySelection;
   final bool allowDisableYearSelection;
 
-  DatePicker._({
-    required XXPicker ddPicker,
-    required XXPicker mmPicker,
-    required XXPicker yyPicker,
+  DateSelector._({
+    required Selector ddPicker,
+    required Selector mmPicker,
+    required Selector yyPicker,
     required this.initialValue,
     required this.allowDisableDaySelection,
     required this.allowDisableYearSelection,
@@ -23,7 +23,7 @@ class DatePicker {
           PickerID.yearPicker: yyPicker
         };
 
-  factory DatePicker({
+  factory DateSelector({
     required List<int> years,
     required DDMMYYYY initialValue,
     required bool allowDisableDaySelection,
@@ -44,29 +44,29 @@ class DatePicker {
 
     final List<int> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
 
-    return DatePicker._(
-        ddPicker: XXPicker<int>(
+    return DateSelector._(
+        ddPicker: Selector<int>(
           pickerID: PickerID.datePicker,
           index: dd,
           items: days,
         ),
-        mmPicker: XXPicker<String>(
+        mmPicker: Selector<String>(
             pickerID: PickerID.monthPicker, index: mm, items: monthsOfTheYear),
-        yyPicker: XXPicker<Year>(
+        yyPicker: Selector<Year>(
             pickerID: PickerID.yearPicker, index: yy, items: yearsSorted),
         allowDisableDaySelection: allowDisableDaySelection,
         allowDisableYearSelection: allowDisableYearSelection,
         initialValue: initialValue);
   }
-  DatePicker copyWith({
-    XXPicker<int>? ddPicker,
-    XXPicker<String>? mmPicker,
-    XXPicker<Year>? yyPicker,
+  DateSelector copyWith({
+    Selector<int>? ddPicker,
+    Selector<String>? mmPicker,
+    Selector<Year>? yyPicker,
   }) {
-    return DatePicker._(
-      ddPicker: ddPicker ?? pickers[PickerID.datePicker] as XXPicker<int>,
-      mmPicker: mmPicker ?? pickers[PickerID.monthPicker] as XXPicker<String>,
-      yyPicker: yyPicker ?? pickers[PickerID.yearPicker] as XXPicker<Year>,
+    return DateSelector._(
+      ddPicker: ddPicker ?? pickers[PickerID.datePicker] as Selector<int>,
+      mmPicker: mmPicker ?? pickers[PickerID.monthPicker] as Selector<String>,
+      yyPicker: yyPicker ?? pickers[PickerID.yearPicker] as Selector<Year>,
       initialValue: initialValue,
       allowDisableDaySelection: allowDisableDaySelection,
       allowDisableYearSelection: allowDisableYearSelection,
@@ -123,7 +123,7 @@ class DatePicker {
     return days;
   }
 
-  DatePicker onReset() {
+  DateSelector onReset() {
     final List<Year> yearsSorted =
         pickers[PickerID.yearPicker]!.items as List<Year>;
 
@@ -138,33 +138,33 @@ class DatePicker {
         ddPicker: pickers[PickerID.datePicker]!.copyWith(
             index: dd,
             items: days,
-            isDisabled: (initialValue.dd == null)) as XXPicker<int>,
+            isDisabled: (initialValue.dd == null)) as Selector<int>,
         mmPicker: pickers[PickerID.monthPicker]!.copyWith(index: mm)
-            as XXPicker<String>,
+            as Selector<String>,
         yyPicker: pickers[PickerID.yearPicker]!.copyWith(
             index: yy,
-            isDisabled: (initialValue.yyyy == null)) as XXPicker<Year>);
+            isDisabled: (initialValue.yyyy == null)) as Selector<Year>);
   }
 
-  DatePicker onChange(PickerID pickerID, int index) {
+  DateSelector onChange(PickerID pickerID, int index) {
     final pickers = this.pickers;
     if (pickers[pickerID]!.isDisabled) return this;
     pickers[pickerID] = pickers[pickerID]!.copyWith(index: index);
     final pickersUpdated = updatePickers(pickers, pickerID);
     return copyWith(
-      ddPicker: pickersUpdated[PickerID.datePicker] as XXPicker<int>,
-      mmPicker: pickersUpdated[PickerID.monthPicker] as XXPicker<String>,
-      yyPicker: pickersUpdated[PickerID.yearPicker] as XXPicker<Year>,
+      ddPicker: pickersUpdated[PickerID.datePicker] as Selector<int>,
+      mmPicker: pickersUpdated[PickerID.monthPicker] as Selector<String>,
+      yyPicker: pickersUpdated[PickerID.yearPicker] as Selector<Year>,
     );
   }
 
-  static Map<PickerID, XXPicker> updatePickers(
-    Map<PickerID, XXPicker> pickers,
+  static Map<PickerID, Selector> updatePickers(
+    Map<PickerID, Selector> pickers,
     PickerID changedPickerID,
   ) {
-    final yyPicker = pickers[PickerID.yearPicker] as XXPicker<Year>;
-    final mmPicker = pickers[PickerID.monthPicker] as XXPicker<String>;
-    final ddPicker = pickers[PickerID.datePicker] as XXPicker<int>;
+    final yyPicker = pickers[PickerID.yearPicker] as Selector<Year>;
+    final mmPicker = pickers[PickerID.monthPicker] as Selector<String>;
+    final ddPicker = pickers[PickerID.datePicker] as Selector<int>;
 
     switch (changedPickerID) {
       case PickerID.datePicker:
@@ -191,7 +191,7 @@ class DatePicker {
     return pickers;
   }
 
-  DatePicker toggleDisable(PickerID pickerID) {
+  DateSelector toggleDisable(PickerID pickerID) {
     final pickersUpdated = pickers;
     // Don't allow to disable month Picker
     if (pickerID == PickerID.monthPicker) return this;
@@ -207,9 +207,9 @@ class DatePicker {
             pickers[PickerID.datePicker]!.toggleDisable();
       }
     }
-    final yyPicker = pickers[PickerID.yearPicker] as XXPicker<Year>;
-    final mmPicker = pickers[PickerID.monthPicker] as XXPicker<String>;
-    final ddPicker = pickers[PickerID.datePicker] as XXPicker<int>;
+    final yyPicker = pickers[PickerID.yearPicker] as Selector<Year>;
+    final mmPicker = pickers[PickerID.monthPicker] as Selector<String>;
+    final ddPicker = pickers[PickerID.datePicker] as Selector<int>;
 
     final days = daysInMonth(
         yyPicker.items, yyPicker.selectedValue, mmPicker.selectedIndex ?? 1);
@@ -217,9 +217,9 @@ class DatePicker {
         items: days, index: min(ddPicker.index, days.length - 1));
 
     return copyWith(
-      ddPicker: pickersUpdated[PickerID.datePicker] as XXPicker<int>,
-      mmPicker: pickersUpdated[PickerID.monthPicker] as XXPicker<String>,
-      yyPicker: pickersUpdated[PickerID.yearPicker] as XXPicker<Year>,
+      ddPicker: pickersUpdated[PickerID.datePicker] as Selector<int>,
+      mmPicker: pickersUpdated[PickerID.monthPicker] as Selector<String>,
+      yyPicker: pickersUpdated[PickerID.yearPicker] as Selector<Year>,
     );
   }
 }

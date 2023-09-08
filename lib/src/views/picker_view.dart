@@ -31,7 +31,7 @@ class PickerView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final XXPicker picker = ref.watch(
+    final Selector picker = ref.watch(
         datePickerNotifierProvider.select((value) => value.pickers[pickerID]!));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       picker.scrollTo();

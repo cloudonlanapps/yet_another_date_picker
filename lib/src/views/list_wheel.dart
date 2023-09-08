@@ -18,7 +18,7 @@ class ListWheel extends ConsumerWidget {
     required this.theme,
   });
 
-  final XXPicker picker;
+  final Selector picker;
   final double height;
   final double width;
   final double itemExtent;

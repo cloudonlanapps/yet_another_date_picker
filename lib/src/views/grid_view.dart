@@ -12,7 +12,7 @@ class GridViewSelector extends StatelessWidget {
     required this.theme,
   });
 
-  final XXPicker picker;
+  final Selector picker;
   final Function(int index)? onSelection;
   final DateSelectorThemeData theme;
 
