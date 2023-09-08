@@ -5,23 +5,34 @@ import 'year.dart';
 import 'picker.dart';
 
 class DatePicker {
-  final XXPicker<int?> ddPicker;
-  final XXPicker<String> mmPicker;
-  final XXPicker<Year?> yyPicker;
+  late final Map<PickerID, XXPicker> pickers;
   final DDMMYYYY initialValue;
+  final bool allowDisableDaySelection;
+  final bool allowDisableYearSelection;
 
-  DatePicker._(
-      {required this.ddPicker,
-      required this.mmPicker,
-      required this.yyPicker,
-      required this.initialValue});
+  DatePicker._({
+    required XXPicker ddPicker,
+    required XXPicker mmPicker,
+    required XXPicker yyPicker,
+    required this.initialValue,
+    required this.allowDisableDaySelection,
+    required this.allowDisableYearSelection,
+  }) : pickers = {
+          PickerID.datePicker: ddPicker,
+          PickerID.monthPicker: mmPicker,
+          PickerID.yearPicker: yyPicker
+        };
 
   factory DatePicker({
     required List<int> years,
     required DDMMYYYY initialValue,
+    required bool allowDisableDaySelection,
+    required bool allowDisableYearSelection,
   }) {
-    final List<Year?> yearsSorted = [
-      null, // For Any
+    if (initialValue.dd == null && initialValue.yyyy == null) {
+      throw Exception("Both day and year can't be null");
+    }
+    final List<Year> yearsSorted = [
       ...years.map((e) => Year(e)).toList()
         ..sort((a, b) => a.value.compareTo(b.value)),
     ];
@@ -31,33 +42,43 @@ class DatePicker {
     final int yy = yearsSorted.getIndexOfByInt(initialValue.yyyy) ??
         yearsSorted.length - 1;
 
-    final List<int?> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
+    final List<int> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
 
     return DatePicker._(
-        ddPicker: XXPicker<int?>(name: "day", index: dd, items: days),
-        mmPicker:
-            XXPicker<String>(name: " month", index: mm, items: monthsOfTheYear),
-        yyPicker: XXPicker<Year?>(name: "year", index: yy, items: yearsSorted),
+        ddPicker: XXPicker<int>(
+          pickerID: PickerID.datePicker,
+          index: dd,
+          items: days,
+        ),
+        mmPicker: XXPicker<String>(
+            pickerID: PickerID.monthPicker, index: mm, items: monthsOfTheYear),
+        yyPicker: XXPicker<Year>(
+            pickerID: PickerID.yearPicker, index: yy, items: yearsSorted),
+        allowDisableDaySelection: allowDisableDaySelection,
+        allowDisableYearSelection: allowDisableYearSelection,
         initialValue: initialValue);
   }
   DatePicker copyWith({
-    XXPicker<int?>? ddPicker,
+    XXPicker<int>? ddPicker,
     XXPicker<String>? mmPicker,
-    XXPicker<Year?>? yyPicker,
+    XXPicker<Year>? yyPicker,
   }) {
     return DatePicker._(
-        ddPicker: ddPicker ?? this.ddPicker,
-        mmPicker: mmPicker ?? this.mmPicker,
-        yyPicker: yyPicker ?? this.yyPicker,
-        initialValue: initialValue);
+      ddPicker: ddPicker ?? pickers[PickerID.datePicker] as XXPicker<int>,
+      mmPicker: mmPicker ?? pickers[PickerID.monthPicker] as XXPicker<String>,
+      yyPicker: yyPicker ?? pickers[PickerID.yearPicker] as XXPicker<Year>,
+      initialValue: initialValue,
+      allowDisableDaySelection: allowDisableDaySelection,
+      allowDisableYearSelection: allowDisableYearSelection,
+    );
   }
 
   DDMMYYYY get ddmmyyyy {
-    final dd = ddPicker.selectedValue;
-    final mm = mmPicker.selectedLabel;
-    final yyyy = yyPicker.selectedValue;
+    final dd = pickers[PickerID.datePicker]!.selectedValue;
+    final mm = pickers[PickerID.monthPicker]!.selectedIndex!;
+    final yyyy = pickers[PickerID.yearPicker]!.selectedValue;
 
-    return DDMMYYYY(dd: dd, mm: monthsOfTheYear.indexOf(mm), yyyy: yyyy?.value);
+    return DDMMYYYY(dd: dd, mm: mm, yyyy: yyyy?.value);
   }
 
   static final List<String> monthsOfTheYear = [
@@ -74,7 +95,7 @@ class DatePicker {
     "November",
     "December",
   ];
-  static List<int?> daysInMonth(List<Year?> years, Year? yy, int mm) {
+  static List<int> daysInMonth(List<Year> years, Year? yy, int mm) {
     final int maxDay;
     List<int> daysInMonthList = <int>[
       31,
@@ -97,70 +118,108 @@ class DatePicker {
     ];
     maxDay = daysInMonthList[mm];
 
-    final List<int?> days = List.generate(maxDay + 1, (i) => i == 0 ? null : i);
+    final List<int> days = List.generate(maxDay, (i) => i + 1);
 
     return days;
   }
 
-  DatePicker onChangeMM(int mmIndex) {
-    final days =
-        daysInMonth(yyPicker.items, yyPicker.items[yyPicker.index], mmIndex);
-
-    final n = copyWith(
-        mmPicker: mmPicker.copyWith(index: mmIndex),
-        ddPicker: ddPicker.copyWith(
-            items: days, index: min(ddPicker.index, days.length - 1)));
-    return n;
-  }
-
-  DatePicker onChangeDD(int dd) {
-    var ddPicker = this.ddPicker.copyWith(index: dd);
-    XXPicker<Year?>? yyPicker;
-
-    if (ddPicker.selectedValue == null && this.yyPicker.selectedValue == null) {
-      yyPicker = this.yyPicker.copyWith(index: this.yyPicker.items.length - 1);
-    } else if (ddPicker.items[dd] == 29 &&
-        mmPicker.selectedLabel == monthsOfTheYear[1] &&
-        this.yyPicker.selectedValue != null) {
-      yyPicker = this.yyPicker.copyWith(
-          index: this.yyPicker.items.getIndexOf(this
-              .yyPicker
-              .items
-              .leapYears()
-              .getCloseValue(this.yyPicker.selectedValue!.value)));
-    }
-
-    return copyWith(ddPicker: ddPicker, yyPicker: yyPicker);
-  }
-
-  DatePicker onChangeYY(int yy) {
-    XXPicker<int?>? ddPicker;
-    final yyPicker = this.yyPicker.copyWith(index: yy);
-    final days =
-        daysInMonth(yyPicker.items, yyPicker.items[yy], mmPicker.index);
-
-    if (this.ddPicker.selectedValue == null && yyPicker.selectedValue == null) {
-      ddPicker = this.ddPicker.copyWith(index: 1, items: days);
-    } else {
-      ddPicker = this.ddPicker.copyWith(
-          items: days, index: min(this.ddPicker.index, days.length - 1));
-    }
-    return copyWith(ddPicker: ddPicker, yyPicker: yyPicker);
-  }
-
   DatePicker onReset() {
-    final List<Year?> yearsSorted = yyPicker.items;
+    final List<Year> yearsSorted =
+        pickers[PickerID.yearPicker]!.items as List<Year>;
 
     final int dd = (initialValue.dd == null) ? 0 : initialValue.dd!;
     final int mm = initialValue.mm; // Indexed from 0
     final int yy = yearsSorted.getIndexOfByInt(initialValue.yyyy) ??
         yearsSorted.length - 1;
 
-    final List<int?> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
+    final List<int> days = daysInMonth(yearsSorted, yearsSorted[yy], mm);
 
     return copyWith(
-        ddPicker: ddPicker.copyWith(index: dd, items: days),
-        mmPicker: mmPicker.copyWith(index: mm),
-        yyPicker: yyPicker.copyWith(index: yy));
+        ddPicker: pickers[PickerID.datePicker]!.copyWith(
+            index: dd,
+            items: days,
+            isDisabled: (initialValue.dd == null)) as XXPicker<int>,
+        mmPicker: pickers[PickerID.monthPicker]!.copyWith(index: mm)
+            as XXPicker<String>,
+        yyPicker: pickers[PickerID.yearPicker]!.copyWith(
+            index: yy,
+            isDisabled: (initialValue.yyyy == null)) as XXPicker<Year>);
+  }
+
+  DatePicker onChange(PickerID pickerID, int index) {
+    final pickers = this.pickers;
+    if (pickers[pickerID]!.isDisabled) return this;
+    pickers[pickerID] = pickers[pickerID]!.copyWith(index: index);
+    final pickersUpdated = updatePickers(pickers, pickerID);
+    return copyWith(
+      ddPicker: pickersUpdated[PickerID.datePicker] as XXPicker<int>,
+      mmPicker: pickersUpdated[PickerID.monthPicker] as XXPicker<String>,
+      yyPicker: pickersUpdated[PickerID.yearPicker] as XXPicker<Year>,
+    );
+  }
+
+  static Map<PickerID, XXPicker> updatePickers(
+    Map<PickerID, XXPicker> pickers,
+    PickerID changedPickerID,
+  ) {
+    final yyPicker = pickers[PickerID.yearPicker] as XXPicker<Year>;
+    final mmPicker = pickers[PickerID.monthPicker] as XXPicker<String>;
+    final ddPicker = pickers[PickerID.datePicker] as XXPicker<int>;
+
+    switch (changedPickerID) {
+      case PickerID.datePicker:
+        // Need to update year if the date is Feb 29 to nearest Leap Year
+        if (ddPicker.selectedIndex == 29 &&
+            mmPicker.selectedLabel == monthsOfTheYear[1]) {
+          pickers[PickerID.datePicker] = yyPicker.copyWith(
+              index: yyPicker.items.getIndexOf(yyPicker.items
+                  .leapYears()
+                  .getCloseValue(yyPicker.selectedValue!.value)));
+        }
+        break;
+      case PickerID.monthPicker:
+      case PickerID.yearPicker:
+        // Need to update day as the length will vary
+
+        final days = daysInMonth(yyPicker.items, yyPicker.selectedValue,
+            mmPicker.selectedIndex ?? 1);
+        pickers[PickerID.datePicker] = ddPicker.copyWith(
+            items: days, index: min(ddPicker.index, days.length - 1));
+
+        break;
+    }
+    return pickers;
+  }
+
+  DatePicker toggleDisable(PickerID pickerID) {
+    final pickersUpdated = pickers;
+    // Don't allow to disable month Picker
+    if (pickerID == PickerID.monthPicker) return this;
+
+    pickersUpdated[pickerID] = pickers[pickerID]!.toggleDisable();
+    if (pickersUpdated[PickerID.datePicker]!.isDisabled &&
+        pickersUpdated[PickerID.yearPicker]!.isDisabled) {
+      if (pickerID == PickerID.datePicker) {
+        pickersUpdated[PickerID.yearPicker] =
+            pickers[PickerID.yearPicker]!.toggleDisable();
+      } else if (pickerID == PickerID.yearPicker) {
+        pickersUpdated[PickerID.datePicker] =
+            pickers[PickerID.datePicker]!.toggleDisable();
+      }
+    }
+    final yyPicker = pickers[PickerID.yearPicker] as XXPicker<Year>;
+    final mmPicker = pickers[PickerID.monthPicker] as XXPicker<String>;
+    final ddPicker = pickers[PickerID.datePicker] as XXPicker<int>;
+
+    final days = daysInMonth(
+        yyPicker.items, yyPicker.selectedValue, mmPicker.selectedIndex ?? 1);
+    pickers[PickerID.datePicker] = ddPicker.copyWith(
+        items: days, index: min(ddPicker.index, days.length - 1));
+
+    return copyWith(
+      ddPicker: pickersUpdated[PickerID.datePicker] as XXPicker<int>,
+      mmPicker: pickersUpdated[PickerID.monthPicker] as XXPicker<String>,
+      yyPicker: pickersUpdated[PickerID.yearPicker] as XXPicker<Year>,
+    );
   }
 }

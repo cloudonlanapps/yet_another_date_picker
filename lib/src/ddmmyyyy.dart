@@ -14,6 +14,6 @@ class DDMMYYYY {
     return DDMMYYYY(
         dd: dateTime.day, mm: dateTime.month - 1, yyyy: dateTime.year);
   }
-  DateTime? get toDateTime =>
+  DateTime? get toDateTimeORNull =>
       (yyyy == null || dd == null) ? null : DateTime(yyyy!, mm, dd!);
 }

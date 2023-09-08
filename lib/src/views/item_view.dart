@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class CustCard extends StatelessWidget {
-  const CustCard({
+class ItemView extends StatelessWidget {
+  const ItemView({
     Key? key,
     required this.label,
     required this.backgroundColor,
@@ -26,11 +26,7 @@ class CustCard extends StatelessWidget {
       width: width,
       height: height,
       child: Card(
-          margin: EdgeInsets.symmetric(
-            vertical: max(height * 0.02, 4.0),
-            horizontal: max(width * 0.02, 4.0),
-          ),
-          color: backgroundColor,
+          color: Theme.of(context).colorScheme.primaryContainer,
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(2.0),

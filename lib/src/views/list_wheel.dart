@@ -1,51 +1,56 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../themedata.dart';
 import '../model/picker.dart';
+import 'grid_view.dart';
 import 'item_view.dart';
 
 class ListWheel extends ConsumerWidget {
-  final XXPicker picker;
-  final double height;
-  final double width;
-  final Color? focusColor;
-  final Color? focusTextColor;
-  final Function(int index)? onSelection;
   const ListWheel({
     super.key,
     required this.picker,
     required this.height,
     required this.width,
-    this.focusColor,
-    this.focusTextColor,
-    this.onSelection,
+    required this.itemExtent,
+    required this.onSelection,
+    required this.theme,
   });
+
+  final XXPicker picker;
+  final double height;
+  final double width;
+  final double itemExtent;
+
+  final void Function({required PickerID pickerID, required int index})
+      onSelection;
+  final DateSelectorThemeData theme;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Center(
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.transparent,
-        ),
-        height: height * 5,
+      child: SizedBox(
+        height: height,
         width: width,
         child: ListWheelScrollView.useDelegate(
             overAndUnderCenterOpacity: 0.5,
-            squeeze: 1.1,
             controller: picker.controller,
-            itemExtent: height * 0.5,
-            diameterRatio: 2.0,
+            itemExtent: itemExtent,
             physics: const FixedExtentScrollPhysics(),
             onSelectedItemChanged: (value) {
               if (picker.index != value) {
-                onSelection?.call(value);
+                onSelection.call(pickerID: picker.pickerID, index: value);
               }
             },
             childDelegate: ListWheelChildLoopingListDelegate(children: [
               ...picker.items.map((e) {
                 final myIndex = picker.items.indexOf(e);
                 final selected = myIndex == picker.index;
+                final Color backgroundColor = theme.backgroundColor;
+
+                final TextStyle textStyle =
+                    selected ? theme.textStyleSelected : theme.textStyle;
                 return GestureDetector(
                   onTap: selected
                       ? () => showDialog(
@@ -53,117 +58,33 @@ class ListWheel extends ConsumerWidget {
                             builder: (BuildContext context) {
                               return GridViewSelector(
                                 picker: picker,
-                                onSelection: onSelection,
+                                theme: theme,
+                                onSelection: (value) {
+                                  if (picker.index != value) {
+                                    onSelection.call(
+                                        pickerID: picker.pickerID,
+                                        index: value);
+                                  }
+                                },
                               );
                             },
                           )
                       : () {
-                          onSelection?.call(myIndex);
+                          onSelection.call(
+                              pickerID: picker.pickerID, index: myIndex);
                         },
-                  child: CustCard(
-                    label: picker.labels[myIndex],
+                  child: ItemView(
                     height: height,
                     width: width,
                     alignment: Alignment.center,
-                    backgroundColor: selected
-                        ? Theme.of(context).colorScheme.primaryContainer
-                        : Theme.of(context).colorScheme.secondaryContainer,
-                    textStyle: TextStyle(
-                        fontWeight: selected ? FontWeight.bold : null,
-                        color: selected
-                            ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.secondary),
+                    backgroundColor: backgroundColor,
+                    textStyle: textStyle,
+                    label: picker.labels[myIndex],
                   ),
                 );
               }).toList()
             ])),
       ),
-    );
-  }
-}
-
-class GridViewSelector extends ConsumerWidget {
-  final XXPicker picker;
-  final Function(int index)? onSelection;
-  const GridViewSelector({
-    super.key,
-    required this.picker,
-    this.onSelection,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Center(
-      child: Card(
-          shadowColor: Theme.of(context).colorScheme.secondaryContainer,
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Wrap(
-                  alignment: WrapAlignment.spaceAround,
-                  spacing: 2.0,
-                  runSpacing: 4.0,
-                  children: [
-                    for (var i = 0; i < picker.items.length; i++)
-                      Theme(
-                        data: Theme.of(context).copyWith(
-                          chipTheme: ChipThemeData(
-                            backgroundColor: Colors
-                                .transparent, // Set background color to be transparent
-                            disabledColor: Colors
-                                .transparent, // Set disabled color to be transparent
-                            selectedColor: Colors
-                                .transparent, // Set selected color to be transparent
-                            secondaryLabelStyle: const TextStyle(
-                                color: Colors.black), // Set label color
-                            labelStyle: const TextStyle(
-                                color: Colors.black), // Set label color
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide.none,
-                              // Define the shape
-                              borderRadius: BorderRadius.circular(
-                                  0), // Set border radius to 0 for no border
-                            ),
-                          ),
-                        ),
-                        child: ActionChip(
-                          onPressed: () {
-                            onSelection?.call(i);
-                            Navigator.pop(context, true);
-                          },
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                          shape: const StadiumBorder(side: BorderSide.none),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          label: Text(
-                            picker.labels[i],
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          labelPadding:
-                              const EdgeInsets.symmetric(horizontal: 8),
-                        ),
-                      )
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context, false);
-                        },
-                        child: const Text("Cancel")),
-                  ),
-                )
-              ],
-            ),
-          )),
     );
   }
 }

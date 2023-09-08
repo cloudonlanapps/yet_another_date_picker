@@ -1,33 +1,48 @@
 import 'package:flutter/material.dart';
 
+enum PickerID {
+  datePicker,
+  monthPicker,
+  yearPicker,
+}
+
 class XXPicker<T> {
-  final String name;
+  final PickerID pickerID;
   final int index;
   final List<T> items;
   final FixedExtentScrollController controller;
-  final int? padding;
-  final void Function(T value) toStringFormatted;
 
-  XXPicker._(
-      {required this.name,
-      required this.index,
-      required this.items,
-      required this.controller,
-      this.padding,
-      void Function(T value)? toStringFormatted})
-      : toStringFormatted =
-            (toStringFormatted ?? (T value) => value.toString());
+  final String Function(T value) toStringFormatted;
+  final bool isDisabled;
 
-  List<String> get labels => items
-      .map((e) => (e == null) ? "any" : e.toString().padLeft(2, '0'))
-      .toList();
+  XXPicker._({
+    required this.pickerID,
+    required this.index,
+    required this.items,
+    required this.controller,
+    required this.isDisabled,
+    required this.toStringFormatted,
+  });
 
-  T? get selectedValue => items[index];
-  String get selectedLabel => labels[index];
+  factory XXPicker(
+      {required PickerID pickerID,
+      required int index,
+      required List<T> items,
+      bool? isDisabled,
+      String Function(T value)? toStringFormatted}) {
+    return XXPicker._(
+        pickerID: pickerID,
+        index: index,
+        items: items,
+        controller: FixedExtentScrollController(initialItem: index),
+        isDisabled: isDisabled ?? false,
+        toStringFormatted: toStringFormatted ?? (T value) => value.toString());
+  }
 
   XXPicker<T> copyWith({
     int? index,
     List<T>? items,
+    bool? isDisabled,
   }) {
     var index_ = index ?? this.index;
     final items_ = items ?? this.items;
@@ -35,30 +50,33 @@ class XXPicker<T> {
     index_ = (index_ > items_.length) ? items_.length - 1 : index_;
 
     final p = XXPicker._(
-      name: name,
-      index: index_,
-      items: items_,
-      controller: controller,
-    );
+        pickerID: pickerID,
+        index: index_,
+        items: items_,
+        controller: controller,
+        isDisabled: isDisabled ?? this.isDisabled,
+        toStringFormatted: toStringFormatted);
 
     return p;
   }
 
-  scrollTo() {
+  scrollTo({bool animate = false}) {
     if (index == controller.selectedItem) return;
-    controller.jumpToItem(index);
+    if (animate) {
+      controller.animateToItem(index,
+          duration: const Duration(microseconds: 300), curve: Curves.ease);
+    } else {
+      controller.jumpToItem(index);
+    }
   }
 
-  factory XXPicker({
-    required String name,
-    required int index,
-    required List<T> items,
-  }) {
-    return XXPicker._(
-      name: name,
-      index: index,
-      items: items,
-      controller: FixedExtentScrollController(initialItem: index),
-    );
+  List<String> get labels => items.map((e) => toStringFormatted(e)).toList();
+
+  int? get selectedIndex => isDisabled ? null : index;
+  T? get selectedValue => isDisabled ? null : items[index];
+  String get selectedLabel => isDisabled ? "" : labels[index];
+
+  XXPicker<T> toggleDisable() {
+    return copyWith(isDisabled: !isDisabled);
   }
 }

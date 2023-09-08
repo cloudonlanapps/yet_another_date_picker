@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yet_another_date_picker/src/model/picker.dart';
 
 import '../model/date_picker.dart';
 import '../ddmmyyyy.dart';
@@ -6,42 +7,53 @@ import '../ddmmyyyy.dart';
 enum UpdateType { none, date, month, year }
 
 class DatePickerNotifier extends StateNotifier<DatePicker> {
-  UpdateType updateType = UpdateType.none;
+  bool isUpdating = false;
   final void Function(DDMMYYYY ddmmyyyy) onDateChange;
   final DDMMYYYY initialDate;
+
   DatePickerNotifier({
     required List<int> years,
     required this.initialDate,
     required this.onDateChange,
-  }) : super(DatePicker(years: years, initialValue: initialDate));
-  void onChangeDD(int dd) {
-    if (state.ddPicker.index == dd || updateType != UpdateType.none) return;
+    bool allowDisableDaySelection = true,
+    bool allowDisableYearSelection = true,
+  }) : super(DatePicker(
+          years: years,
+          initialValue: initialDate,
+          allowDisableDaySelection: allowDisableDaySelection,
+          allowDisableYearSelection: allowDisableYearSelection,
+        ));
 
-    updateType = UpdateType.date;
-    state = state.onChangeDD(dd);
-    onDateChange(state.ddmmyyyy);
-    updateType = UpdateType.none;
-  }
-
-  void onChangeMM(int mm) {
-    if (state.mmPicker.index == mm || updateType != UpdateType.none) return;
-    updateType = UpdateType.month;
-    state = state.onChangeMM(mm);
-    onDateChange(state.ddmmyyyy);
-    updateType = UpdateType.none;
-  }
-
-  onChangeYY(int yy) {
-    if (state.yyPicker.index == yy || updateType != UpdateType.none) return;
-    updateType = UpdateType.year;
-    state = state.onChangeYY(yy);
-    onDateChange(state.ddmmyyyy);
-    updateType = UpdateType.none;
+  void onChange({required int index, required PickerID pickerID}) {
+    if (!state.pickers[pickerID]!.isDisabled) {
+      safeCall(() {
+        state = state.onChange(pickerID, index);
+        onDateChange(state.ddmmyyyy);
+      });
+    }
   }
 
   onReset() {
-    state = state.onReset();
-    onDateChange(state.ddmmyyyy);
+    safeCall(() {
+      state = state.onReset();
+      onDateChange(state.ddmmyyyy);
+    });
+  }
+
+  toggleDisable({required PickerID pickerID}) {
+    safeCall(() {
+      state = state.toggleDisable(pickerID);
+      onDateChange(state.ddmmyyyy);
+    });
+  }
+
+  safeCall(Function() fn) {
+    if (isUpdating != false) {
+      return;
+    }
+    isUpdating = true;
+    fn();
+    isUpdating = false;
   }
 }
 
