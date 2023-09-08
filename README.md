@@ -69,3 +69,5 @@ As the years are provided in a list, instead of range, it is possible to skip th
       - Added DDMMYYYY.toDateTime, when it is not null, the weekday can be obtained from the package `intl` `DateFormat('EEEE').format(date);`
 - [X] Allow UI to disable either day or year.
 - [X] Option to set, heigth and width from outside.
+
+If you have any suggestion, feelfree to create an issue
