@@ -25,49 +25,37 @@ class _MyAppState extends State<MyApp> {
       ),
       home: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Date Picker Example'),
+          title: const DateSelected(),
         ),
         body: Stack(
           children: [
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: ListView(
                 children: [
-                  DefaultTextStyle(
-                      style: Theme.of(context).textTheme.bodyMedium!,
-                      child: const DateSelected()),
-                  const SizedBox(height: 20),
                   const DateSelectorWrapper(),
-                  const SizedBox(height: 20),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text.rich(TextSpan(
-                            style: Theme.of(context).textTheme.bodyLarge!,
-                            children: [
-                              TextSpan(
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall!
-                                      .copyWith(fontWeight: FontWeight.bold),
-                                  text: "Select date\n"),
-                              const TextSpan(
-                                text: "(from the years provided)\n",
-                              ),
-                              const TextSpan(
-                                  text:
-                                      "* If the day is any, it selects a month\n"),
-                              const TextSpan(
-                                  text: "* If the year is null, it represents "
-                                      "the specific day from any year\n"),
-                              const TextSpan(
-                                  text:
-                                      "* Can't have both day and year empty\n"),
-                            ])),
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text.rich(TextSpan(
+                        style: Theme.of(context).textTheme.bodyLarge!,
+                        children: [
+                          TextSpan(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineSmall!
+                                  .copyWith(fontWeight: FontWeight.bold),
+                              text: "Select date\n"),
+                          const TextSpan(
+                            text: "(from the years provided)\n",
+                          ),
+                          const TextSpan(
+                              text:
+                                  "* If the day is any, it selects a month\n"),
+                          const TextSpan(
+                              text: "* If the year is null, it represents "
+                                  "the specific day from any year\n"),
+                          const TextSpan(
+                              text: "* Can't have both day and year empty\n"),
+                        ])),
                   )
                 ],
               ),
@@ -80,18 +68,18 @@ class _MyAppState extends State<MyApp> {
 }
 
 const List<String> monthsOfTheYear = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
 ];
 
 class DateSelected extends ConsumerWidget {
@@ -103,11 +91,14 @@ class DateSelected extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ddmmyyyy = ref.watch(ddmmyyyyProvider);
 
-    final day = (ddmmyyyy.dd == null) ? "" : "${ddmmyyyy.dd} - ";
+    final day = (ddmmyyyy.dd == null)
+        ? "Any day in "
+        : "${ddmmyyyy.dd!.toString().padLeft(2, '0')} - ";
     final month = monthsOfTheYear[ddmmyyyy.mm];
-    final year = (ddmmyyyy.yyyy == null) ? "" : " - ${ddmmyyyy.yyyy}";
+    final year =
+        (ddmmyyyy.yyyy == null) ? " of Any year" : " - ${ddmmyyyy.yyyy}";
 
-    return Text("$day$month$year");
+    return Text(" Date Selected: $day$month$year");
   }
 }
 
@@ -124,7 +115,7 @@ class DateSelectorWrapper extends ConsumerWidget {
       onDateChanged: (ddmmyyyy) async {
         ref.read(ddmmyyyyProvider.notifier).state = ddmmyyyy;
       },
-      width: MediaQuery.of(context).size.width * .3,
+      width: MediaQuery.of(context).size.width * .5,
       height: MediaQuery.of(context).size.height * 0.6,
       itemExtend: 40,
     );
