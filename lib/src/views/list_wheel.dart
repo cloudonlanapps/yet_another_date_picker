@@ -74,9 +74,6 @@ class ListWheel extends ConsumerWidget {
                               pickerID: picker.pickerID, index: myIndex);
                         },
                   child: ItemView(
-                    height: height,
-                    width: width,
-                    alignment: Alignment.center,
                     backgroundColor: backgroundColor,
                     textStyle: textStyle,
                     label: picker.labels[myIndex],

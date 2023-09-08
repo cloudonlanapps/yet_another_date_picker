@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yet_another_date_picker/src/model/picker.dart';
 
 import '../model/date_picker.dart';
 import '../ddmmyyyy.dart';
+import '../model/picker.dart';
 
 enum UpdateType { none, date, month, year }
 

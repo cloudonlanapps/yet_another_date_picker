@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yet_another_date_picker/src/themedata.dart';
 
 import '../model/picker.dart';
 import '../provider/date_picker.dart';
+import '../themedata.dart';
 import 'list_wheel.dart';
 
 class PickerView extends ConsumerWidget {
@@ -37,18 +37,10 @@ class PickerView extends ConsumerWidget {
       picker.scrollTo();
     });
 
-    return Center(
+    return FittedBox(
+      fit: BoxFit.scaleDown,
       child: Stack(
         children: [
-          SizedBox(
-            height: height,
-            width: width,
-          ),
-          /* Container(
-            height: height,
-            width: width,
-            decoration: BoxDecoration(border: Border.all(width: 0.25)),
-          ), */
           ListWheel(
             picker: picker,
             width: width,
@@ -62,13 +54,13 @@ class PickerView extends ConsumerWidget {
               height: height,
               width: width,
               child: Container(
-                color: theme.backgroundColorDisabled,
+                color: theme.backgroundColor,
                 alignment: Alignment.center,
                 child: RotatedBox(
                     quarterTurns: -1,
                     child: Text(
                       "Any ${picker.pickerID == PickerID.datePicker ? "Day" : "Year"}",
-                      style: theme.textStyleDisabled,
+                      style: theme.textStyleSelected,
                     )),
               ),
             ),

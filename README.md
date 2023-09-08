@@ -67,5 +67,5 @@ As the years are provided in a list, instead of range, it is possible to skip th
 ~~- [ ] Provide a standard calander interface~~ Not required
 - [X] Support weekday when year and day are present
       - Added DDMMYYYY.toDateTime, when it is not null, the weekday can be obtained from the package `intl` `DateFormat('EEEE').format(date);`
-- [ ] Allow UI to disable either day or year.
-- [ ] Option to set, heigth and width from outside.
+- [X] Allow UI to disable either day or year.
+- [X] Option to set, heigth and width from outside.

@@ -124,14 +124,13 @@ class DateSelectorWrapper extends ConsumerWidget {
       onDateChanged: (ddmmyyyy) async {
         ref.read(ddmmyyyyProvider.notifier).state = ddmmyyyy;
       },
+      width: MediaQuery.of(context).size.width * .3,
+      height: MediaQuery.of(context).size.height * 0.6,
+      itemExtend: 40,
     );
   }
 }
 
 final ddmmyyyyProvider = StateProvider<DDMMYYYY>((ref) {
-  return DDMMYYYY(
-    dd: DateTime.now().day,
-    mm: DateTime.now().month - 1,
-    yyyy: DateTime.now().year,
-  );
+  return DDMMYYYY.fromDateTime(DateTime.now());
 });

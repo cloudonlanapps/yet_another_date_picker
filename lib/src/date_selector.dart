@@ -19,28 +19,24 @@ class DateSelector extends ConsumerWidget {
   final bool allowDisableYearSelection;
   final double width;
   final double height;
-  final EdgeInsets margin;
-  final EdgeInsets padding;
+  final double? itemExtend;
+
   final DateSelectorThemeData? dateSelectorThemeData;
-  const DateSelector(
-      {super.key,
-      required this.years,
-      required this.initialDate,
-      required this.onDateChanged,
-      this.allowDisableDaySelection = true,
-      this.allowDisableYearSelection = true,
-      this.width = 252,
-      this.height = 252,
-      EdgeInsets? margin,
-      EdgeInsets? padding,
-      this.dateSelectorThemeData})
-      : margin = margin ?? const EdgeInsets.all(4.0),
-        padding = padding ?? const EdgeInsets.all(4.0);
+  const DateSelector({
+    super.key,
+    required this.years,
+    required this.initialDate,
+    required this.onDateChanged,
+    this.allowDisableDaySelection = true,
+    this.allowDisableYearSelection = true,
+    this.width = 252,
+    this.height = 252,
+    this.itemExtend,
+    this.dateSelectorThemeData,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final childWidth = width - padding.left - padding.right;
-    final childHeight = height - padding.top - padding.bottom;
     final DateSelectorThemeData defaultTheme = DateSelectorThemeData(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       backgroundColorDisabled: Theme.of(context).colorScheme.surface,
@@ -64,12 +60,9 @@ class DateSelector extends ConsumerWidget {
             )),
       ],
       child: _DateSelector(
-          margin: margin,
-          padding: padding,
           width: width,
           height: height,
-          childWidth: childWidth,
-          childHeight: childHeight,
+          itemExtend: itemExtend ?? width / 6,
           theme: dateSelectorThemeData ?? defaultTheme),
     );
   }
@@ -77,21 +70,16 @@ class DateSelector extends ConsumerWidget {
 
 class _DateSelector extends ConsumerWidget {
   const _DateSelector({
-    required this.margin,
-    required this.padding,
     required this.width,
     required this.height,
-    required this.childWidth,
-    required this.childHeight,
+    required this.itemExtend,
     required this.theme,
   });
 
-  final EdgeInsets margin;
-  final EdgeInsets padding;
   final double width;
   final double height;
-  final double childWidth;
-  final double childHeight;
+  final double itemExtend;
+
   final DateSelectorThemeData theme;
 
   @override
@@ -112,30 +100,31 @@ class _DateSelector extends ConsumerWidget {
             Flexible(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   PickerView(
                     pickerID: PickerID.datePicker,
-                    width: childWidth * 1 / 6,
-                    height: childHeight,
-                    itemExtent: childHeight / 6,
+                    width: width * 1 / 6,
+                    height: height,
+                    itemExtent: itemExtend,
                     bottomPadding: kMinInteractiveDimension,
                     theme: theme,
                     allowDisable: canDisableDay,
                   ),
                   PickerView(
                     pickerID: PickerID.monthPicker,
-                    width: childWidth * 3 / 6,
-                    height: childHeight,
-                    itemExtent: childHeight / 6,
+                    width: width * 3 / 6,
+                    height: height,
+                    itemExtent: itemExtend,
                     bottomPadding: kMinInteractiveDimension,
                     theme: theme,
                     allowDisable: false,
                   ),
                   PickerView(
                     pickerID: PickerID.yearPicker,
-                    width: childWidth * 2 / 6,
-                    height: childHeight,
-                    itemExtent: childHeight / 6,
+                    width: width * 2 / 6,
+                    height: height,
+                    itemExtent: itemExtend,
                     bottomPadding: kMinInteractiveDimension,
                     theme: theme,
                     allowDisable: canDisableYear,
@@ -149,13 +138,13 @@ class _DateSelector extends ConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MenuItem(
                     tooltip: 'Enable/Disable Day Selection',
                     iconData: Icons.toggle_off,
                     iconColor: theme.iconColor,
-                    width: childWidth / 6,
+                    width: width / 6,
                     onTap: () => ref
                         .read(datePickerNotifierProvider.notifier)
                         .toggleDisable(pickerID: PickerID.datePicker),
@@ -164,7 +153,7 @@ class _DateSelector extends ConsumerWidget {
                     tooltip: 'Restore',
                     iconData: Icons.restart_alt,
                     iconColor: theme.iconColor,
-                    width: childWidth * 3 / 6,
+                    width: width * 3 / 6,
                     onTap: () =>
                         ref.read(datePickerNotifierProvider.notifier).onReset(),
                   ),
@@ -172,7 +161,7 @@ class _DateSelector extends ConsumerWidget {
                     tooltip: 'Enable/Disable Year Selection',
                     iconData: Icons.toggle_on,
                     iconColor: theme.iconColor,
-                    width: childWidth * 2 / 6,
+                    width: width * 2 / 6,
                     onTap: () => ref
                         .read(datePickerNotifierProvider.notifier)
                         .toggleDisable(pickerID: PickerID.yearPicker),
