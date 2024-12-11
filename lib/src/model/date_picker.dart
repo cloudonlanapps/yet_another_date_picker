@@ -47,7 +47,7 @@ class DateSelector {
     return DateSelector._(
         ddPicker: Selector<int>(
           pickerID: PickerID.datePicker,
-          index: dd,
+          index: dd - 1,
           items: days,
         ),
         mmPicker: Selector<String>(
