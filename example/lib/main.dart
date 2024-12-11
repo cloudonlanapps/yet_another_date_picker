@@ -109,9 +109,14 @@ class DateSelectorWrapper extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final initialDate = DateTime.now();
+
+    const startYear = 1970;
+    const futureYears = 0;
     return DateSelector(
-      years: List.generate(47, (index) => 1977 + index),
-      initialDate: DDMMYYYY.fromDateTime(DateTime.now()),
+      years: List.generate(DateTime.now().year - startYear + 1 + futureYears,
+          (index) => startYear + index),
+      initialDate: DDMMYYYY.fromDateTime(initialDate),
       onDateChanged: (ddmmyyyy) async {
         ref.read(ddmmyyyyProvider.notifier).state = ddmmyyyy;
       },
@@ -123,5 +128,6 @@ class DateSelectorWrapper extends ConsumerWidget {
 }
 
 final ddmmyyyyProvider = StateProvider<DDMMYYYY>((ref) {
-  return DDMMYYYY.fromDateTime(DateTime.now());
+  final initialDate = DateTime.now();
+  return DDMMYYYY.fromDateTime(initialDate);
 });

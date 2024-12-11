@@ -79,4 +79,9 @@ class Selector<T> {
   Selector<T> toggleDisable() {
     return copyWith(isDisabled: !isDisabled);
   }
+
+  @override
+  String toString() {
+    return 'Selector(pickerID: $pickerID, index: $index, items: $items, toStringFormatted: $toStringFormatted, isDisabled: $isDisabled)';
+  }
 }

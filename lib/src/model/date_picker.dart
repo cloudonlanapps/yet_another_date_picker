@@ -47,7 +47,7 @@ class DateSelector {
     return DateSelector._(
         ddPicker: Selector<int>(
           pickerID: PickerID.datePicker,
-          index: dd,
+          index: dd - 1,
           items: days,
         ),
         mmPicker: Selector<String>(
@@ -221,5 +221,12 @@ class DateSelector {
       mmPicker: pickersUpdated[PickerID.monthPicker] as Selector<String>,
       yyPicker: pickersUpdated[PickerID.yearPicker] as Selector<Year>,
     );
+  }
+
+  @override
+  String toString() {
+    return 'DateSelector(pickers: $pickers, initialValue: $initialValue, '
+        'allowDisableDaySelection: $allowDisableDaySelection, '
+        'allowDisableYearSelection: $allowDisableYearSelection)';
   }
 }
