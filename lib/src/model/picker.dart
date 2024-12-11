@@ -72,9 +72,13 @@ class Selector<T> {
 
   List<String> get labels => items.map((e) => toStringFormatted(e)).toList();
 
-  int? get selectedIndex => isDisabled ? null : index;
-  T? get selectedValue => isDisabled ? null : items[index];
-  String get selectedLabel => isDisabled ? "" : labels[index];
+  int? get selectedIndex => isDisabled
+      ? null
+      : index > 0
+          ? index
+          : 0;
+  T? get selectedValue => isDisabled ? null : items[index > 0 ? index : 0];
+  String get selectedLabel => isDisabled ? "" : labels[index > 0 ? index : 0];
 
   Selector<T> toggleDisable() {
     return copyWith(isDisabled: !isDisabled);
