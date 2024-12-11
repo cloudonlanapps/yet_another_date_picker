@@ -127,7 +127,7 @@ class DateSelector {
     final List<Year> yearsSorted =
         pickers[PickerID.yearPicker]!.items as List<Year>;
 
-    final int dd = (initialValue.dd == null) ? 0 : initialValue.dd!;
+    final int dd = initialValue.dd ?? 1;
     final int mm = initialValue.mm; // Indexed from 0
     final int yy = yearsSorted.getIndexOfByInt(initialValue.yyyy) ??
         yearsSorted.length - 1;
@@ -136,7 +136,7 @@ class DateSelector {
 
     return copyWith(
         ddPicker: pickers[PickerID.datePicker]!.copyWith(
-            index: dd,
+            index: dd - 1,
             items: days,
             isDisabled: (initialValue.dd == null)) as Selector<int>,
         mmPicker: pickers[PickerID.monthPicker]!.copyWith(index: mm)
