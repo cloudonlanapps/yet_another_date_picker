@@ -222,4 +222,11 @@ class DateSelector {
       yyPicker: pickersUpdated[PickerID.yearPicker] as Selector<Year>,
     );
   }
+
+  @override
+  String toString() {
+    return 'DateSelector(pickers: $pickers, initialValue: $initialValue, '
+        'allowDisableDaySelection: $allowDisableDaySelection, '
+        'allowDisableYearSelection: $allowDisableYearSelection)';
+  }
 }
