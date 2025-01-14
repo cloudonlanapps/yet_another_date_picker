@@ -12,7 +12,7 @@ class PickerView extends ConsumerWidget {
   const PickerView({
     super.key,
     required this.uid,
-    required this.pickerID,
+    required this.picker,
     required this.height,
     required this.width,
     required this.itemExtent,
@@ -21,7 +21,7 @@ class PickerView extends ConsumerWidget {
     required this.allowDisable,
   });
   final String uid;
-  final PickerID pickerID;
+  final Selector picker;
   final double height;
   final double width;
   final double itemExtent;
@@ -32,8 +32,6 @@ class PickerView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Selector picker = ref.watch(
-        datePickerNotifierProvider(uid).select((value) => value.pickers[pickerID]!));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       picker.scrollTo();
     });

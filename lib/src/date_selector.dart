@@ -89,10 +89,13 @@ class _DateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool canDisableDay = ref.watch(datePickerNotifierProvider(uid)
-        .select((value) => value.allowDisableDaySelection));
-    bool canDisableYear = ref.watch(datePickerNotifierProvider(uid)
-        .select((value) => value.allowDisableDaySelection));
+    final datePicker = ref.watch(datePickerNotifierProvider(uid));
+    if (datePicker == null) {
+      return const CircularProgressIndicator();
+    }
+
+    bool canDisableDay = datePicker.allowDisableDaySelection;
+    bool canDisableYear = datePicker.allowDisableYearSelection;
     return SizedBox(
       width: width,
       height: height,
@@ -109,7 +112,7 @@ class _DateSelector extends ConsumerWidget {
                 children: [
                   PickerView(
                     uid: uid,
-                    pickerID: PickerID.datePicker,
+                    picker: datePicker.pickers[PickerID.datePicker]!,
                     width: width * 1 / 6,
                     height: height,
                     itemExtent: itemExtend,
@@ -119,7 +122,7 @@ class _DateSelector extends ConsumerWidget {
                   ),
                   PickerView(
                     uid: uid,
-                    pickerID: PickerID.monthPicker,
+                    picker: datePicker.pickers[PickerID.monthPicker]!,
                     width: width * 3 / 6,
                     height: height,
                     itemExtent: itemExtend,
@@ -129,7 +132,7 @@ class _DateSelector extends ConsumerWidget {
                   ),
                   PickerView(
                     uid: uid,
-                    pickerID: PickerID.yearPicker,
+                    picker: datePicker.pickers[PickerID.yearPicker]!,
                     width: width * 2 / 6,
                     height: height,
                     itemExtent: itemExtend,

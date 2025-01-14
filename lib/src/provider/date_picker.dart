@@ -6,7 +6,7 @@ import '../model/picker.dart';
 
 enum UpdateType { none, date, month, year }
 
-class DatePickerNotifier extends StateNotifier<DateSelector> {
+class DatePickerNotifier extends StateNotifier<DateSelector?> {
   bool isUpdating = false;
   final void Function(DDMMYYYY ddmmyyyy) onDateChange;
   final DDMMYYYY initialDate;
@@ -25,26 +25,32 @@ class DatePickerNotifier extends StateNotifier<DateSelector> {
         ));
 
   void onChange({required int index, required PickerID pickerID}) {
-    if (!state.pickers[pickerID]!.isDisabled) {
-      safeCall(() {
-        state = state.onChange(pickerID, index);
-        onDateChange(state.ddmmyyyy);
-      });
+    if (state != null) {
+      if (!state!.pickers[pickerID]!.isDisabled) {
+        safeCall(() {
+          state = state!.onChange(pickerID, index);
+          onDateChange(state!.ddmmyyyy);
+        });
+      }
     }
   }
 
   onReset() {
-    safeCall(() {
-      state = state.onReset();
-      onDateChange(state.ddmmyyyy);
-    });
+    if (state != null) {
+      safeCall(() {
+        state = state!.onReset();
+        onDateChange(state!.ddmmyyyy);
+      });
+    }
   }
 
   toggleDisable({required PickerID pickerID}) {
-    safeCall(() {
-      state = state.toggleDisable(pickerID);
-      onDateChange(state.ddmmyyyy);
-    });
+    if (state != null) {
+      safeCall(() {
+        state = state!.toggleDisable(pickerID);
+        onDateChange(state!.ddmmyyyy);
+      });
+    }
   }
 
   safeCall(Function() fn) {
@@ -58,7 +64,7 @@ class DatePickerNotifier extends StateNotifier<DateSelector> {
 }
 
 final datePickerNotifierProvider =
-    StateNotifierProvider.family<DatePickerNotifier, DateSelector, String>(
+    StateNotifierProvider.family<DatePickerNotifier, DateSelector?, String>(
         (ref, uid) {
   throw Exception("Can't access outside Module");
 });
