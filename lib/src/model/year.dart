@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'dart:collection';
 
+import 'package:flutter/material.dart';
+
+@immutable
 class Year {
   final int value;
 

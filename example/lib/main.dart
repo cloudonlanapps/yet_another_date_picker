@@ -102,28 +102,49 @@ class DateSelected extends ConsumerWidget {
   }
 }
 
-class DateSelectorWrapper extends ConsumerWidget {
+class DateSelectorWrapper extends ConsumerStatefulWidget {
   const DateSelectorWrapper({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final initialDate = DateTime.now();
+  ConsumerState<DateSelectorWrapper> createState() =>
+      _DateSelectorWrapperState();
+}
 
-    const startYear = 1970;
-    const futureYears = 0;
+class _DateSelectorWrapperState extends ConsumerState<DateSelectorWrapper> {
+  late final DateTime initialDate;
+  final startYear = 1970;
+  final futureYears = 0;
+  late final List<int> years;
+  late DDMMYYYY currentDate;
+
+  @override
+  void initState() {
+    initialDate = DateTime.now();
+    currentDate = DDMMYYYY.fromDateTime(initialDate);
+    years = List.generate(DateTime.now().year - startYear + 1 + futureYears,
+        (index) => startYear + index);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return DateSelector(
-      uid: "Example",
-      years: List.generate(DateTime.now().year - startYear + 1 + futureYears,
-          (index) => startYear + index),
-      initialDate: DDMMYYYY.fromDateTime(initialDate),
-      onDateChanged: (ddmmyyyy) async {
-        ref.read(ddmmyyyyProvider.notifier).state = ddmmyyyy;
-      },
+      years: years,
+      date: currentDate,
       width: MediaQuery.of(context).size.width * .5,
       height: MediaQuery.of(context).size.height * 0.6,
       itemExtend: 40,
+      onDateChanged: (ddmmyyyy) async {
+        currentDate = ddmmyyyy;
+        setState(() {});
+        ref.read(ddmmyyyyProvider.notifier).state = ddmmyyyy;
+      },
+      onReset: () {
+        currentDate = DDMMYYYY.fromDateTime(initialDate);
+        setState(() {});
+      },
     );
   }
 }
