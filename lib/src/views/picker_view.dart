@@ -34,7 +34,7 @@ class PickerView extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       picker.scrollTo();
     });
-    print(picker);
+
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Stack(
