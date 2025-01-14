@@ -12,6 +12,7 @@ import 'views/menu_item.dart';
 import 'views/picker_view.dart';
 
 class DateSelector extends ConsumerWidget {
+  final String uid;
   final List<int> years;
   final DDMMYYYY initialDate;
   final Future<void> Function(DDMMYYYY ddmmyyyy) onDateChanged;
@@ -23,6 +24,7 @@ class DateSelector extends ConsumerWidget {
 
   final DateSelectorThemeData? dateSelectorThemeData;
   const DateSelector({
+    this.uid = "Default",
     super.key,
     required this.years,
     required this.initialDate,
@@ -53,13 +55,15 @@ class DateSelector extends ConsumerWidget {
     );
     return ProviderScope(
       overrides: [
-        datePickerNotifierProvider.overrideWith((ref) => DatePickerNotifier(
-              years: years,
-              initialDate: initialDate,
-              onDateChange: onDateChanged,
-            )),
+        datePickerNotifierProvider(uid)
+            .overrideWith((ref) => DatePickerNotifier(
+                  years: years,
+                  initialDate: initialDate,
+                  onDateChange: onDateChanged,
+                )),
       ],
       child: _DateSelector(
+          uid: uid,
           width: width,
           height: height,
           itemExtend: itemExtend ?? width / 6,
@@ -70,12 +74,13 @@ class DateSelector extends ConsumerWidget {
 
 class _DateSelector extends ConsumerWidget {
   const _DateSelector({
+    required this.uid,
     required this.width,
     required this.height,
     required this.itemExtend,
     required this.theme,
   });
-
+  final String uid;
   final double width;
   final double height;
   final double itemExtend;
@@ -84,9 +89,9 @@ class _DateSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool canDisableDay = ref.watch(datePickerNotifierProvider
+    bool canDisableDay = ref.watch(datePickerNotifierProvider(uid)
         .select((value) => value.allowDisableDaySelection));
-    bool canDisableYear = ref.watch(datePickerNotifierProvider
+    bool canDisableYear = ref.watch(datePickerNotifierProvider(uid)
         .select((value) => value.allowDisableDaySelection));
     return SizedBox(
       width: width,
@@ -103,6 +108,7 @@ class _DateSelector extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   PickerView(
+                    uid: uid,
                     pickerID: PickerID.datePicker,
                     width: width * 1 / 6,
                     height: height,
@@ -112,6 +118,7 @@ class _DateSelector extends ConsumerWidget {
                     allowDisable: canDisableDay,
                   ),
                   PickerView(
+                    uid: uid,
                     pickerID: PickerID.monthPicker,
                     width: width * 3 / 6,
                     height: height,
@@ -121,6 +128,7 @@ class _DateSelector extends ConsumerWidget {
                     allowDisable: false,
                   ),
                   PickerView(
+                    uid: uid,
                     pickerID: PickerID.yearPicker,
                     width: width * 2 / 6,
                     height: height,
@@ -146,7 +154,7 @@ class _DateSelector extends ConsumerWidget {
                     iconColor: theme.iconColor,
                     width: width / 6,
                     onTap: () => ref
-                        .read(datePickerNotifierProvider.notifier)
+                        .read(datePickerNotifierProvider(uid).notifier)
                         .toggleDisable(pickerID: PickerID.datePicker),
                   ),
                   MenuItem(
@@ -154,8 +162,9 @@ class _DateSelector extends ConsumerWidget {
                     iconData: Icons.restart_alt,
                     iconColor: theme.iconColor,
                     width: width * 3 / 6,
-                    onTap: () =>
-                        ref.read(datePickerNotifierProvider.notifier).onReset(),
+                    onTap: () => ref
+                        .read(datePickerNotifierProvider(uid).notifier)
+                        .onReset(),
                   ),
                   MenuItem(
                     tooltip: 'Enable/Disable Year Selection',
@@ -163,7 +172,7 @@ class _DateSelector extends ConsumerWidget {
                     iconColor: theme.iconColor,
                     width: width * 2 / 6,
                     onTap: () => ref
-                        .read(datePickerNotifierProvider.notifier)
+                        .read(datePickerNotifierProvider(uid).notifier)
                         .toggleDisable(pickerID: PickerID.yearPicker),
                   ),
                 ]

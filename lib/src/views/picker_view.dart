@@ -11,6 +11,7 @@ import 'list_wheel.dart';
 class PickerView extends ConsumerWidget {
   const PickerView({
     super.key,
+    required this.uid,
     required this.pickerID,
     required this.height,
     required this.width,
@@ -19,7 +20,7 @@ class PickerView extends ConsumerWidget {
     required this.theme,
     required this.allowDisable,
   });
-
+  final String uid;
   final PickerID pickerID;
   final double height;
   final double width;
@@ -32,7 +33,7 @@ class PickerView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Selector picker = ref.watch(
-        datePickerNotifierProvider.select((value) => value.pickers[pickerID]!));
+        datePickerNotifierProvider(uid).select((value) => value.pickers[pickerID]!));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       picker.scrollTo();
     });
@@ -46,7 +47,8 @@ class PickerView extends ConsumerWidget {
             width: width,
             height: height,
             itemExtent: itemExtent,
-            onSelection: ref.read(datePickerNotifierProvider.notifier).onChange,
+            onSelection:
+                ref.read(datePickerNotifierProvider(uid).notifier).onChange,
             theme: theme,
           ),
           if (picker.isDisabled)

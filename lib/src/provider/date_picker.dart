@@ -58,6 +58,7 @@ class DatePickerNotifier extends StateNotifier<DateSelector> {
 }
 
 final datePickerNotifierProvider =
-    StateNotifierProvider<DatePickerNotifier, DateSelector>((ref) {
+    StateNotifierProvider.family<DatePickerNotifier, DateSelector, String>(
+        (ref, uid) {
   throw Exception("Can't access outside Module");
 });

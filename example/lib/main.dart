@@ -114,6 +114,7 @@ class DateSelectorWrapper extends ConsumerWidget {
     const startYear = 1970;
     const futureYears = 0;
     return DateSelector(
+      uid: "Example",
       years: List.generate(DateTime.now().year - startYear + 1 + futureYears,
           (index) => startYear + index),
       initialDate: DDMMYYYY.fromDateTime(initialDate),
