@@ -1,20 +1,16 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ddmmyyyy.dart';
-import 'model/menu_item.dart';
+import 'model/date_picker.dart';
 import 'model/picker.dart';
-import 'provider/date_picker.dart';
-import 'themedata.dart';
-import 'views/menu_item.dart';
-import 'views/picker_view.dart';
 
-class DateSelector extends ConsumerWidget {
+import 'themedata.dart';
+import 'views/date_selector_view.dart';
+
+class DateSelector extends StatelessWidget {
   final List<int> years;
-  final DDMMYYYY initialDate;
-  final Future<void> Function(DDMMYYYY ddmmyyyy) onDateChanged;
+  final DDMMYYYY date;
+
   final bool allowDisableDaySelection;
   final bool allowDisableYearSelection;
   final double width;
@@ -22,10 +18,13 @@ class DateSelector extends ConsumerWidget {
   final double? itemExtend;
 
   final DateSelectorThemeData? dateSelectorThemeData;
+  final Future<void> Function(DDMMYYYY ddmmyyyy) onDateChanged;
+  final void Function() onReset;
+
   const DateSelector({
     super.key,
     required this.years,
-    required this.initialDate,
+    required this.date,
     required this.onDateChanged,
     this.allowDisableDaySelection = true,
     this.allowDisableYearSelection = true,
@@ -33,10 +32,11 @@ class DateSelector extends ConsumerWidget {
     this.height = 252,
     this.itemExtend,
     this.dateSelectorThemeData,
+    required this.onReset,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final DateSelectorThemeData defaultTheme = DateSelectorThemeData(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       backgroundColorDisabled: Theme.of(context).colorScheme.surface,
@@ -51,130 +51,27 @@ class DateSelector extends ConsumerWidget {
       ),
       iconColor: Theme.of(context).colorScheme.primary,
     );
-    return ProviderScope(
-      overrides: [
-        datePickerNotifierProvider.overrideWith((ref) => DatePickerNotifier(
-              years: years,
-              initialDate: initialDate,
-              onDateChange: onDateChanged,
-            )),
-      ],
-      child: _DateSelector(
-          width: width,
-          height: height,
-          itemExtend: itemExtend ?? width / 6,
-          theme: dateSelectorThemeData ?? defaultTheme),
+    final dateSelector = DateSelectorModel(
+      years: years,
+      initialValue: date,
+      allowDisableDaySelection: allowDisableDaySelection,
+      allowDisableYearSelection: allowDisableYearSelection,
     );
-  }
-}
-
-class _DateSelector extends ConsumerWidget {
-  const _DateSelector({
-    required this.width,
-    required this.height,
-    required this.itemExtend,
-    required this.theme,
-  });
-
-  final double width;
-  final double height;
-  final double itemExtend;
-
-  final DateSelectorThemeData theme;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    bool canDisableDay = ref.watch(datePickerNotifierProvider
-        .select((value) => value.allowDisableDaySelection));
-    bool canDisableYear = ref.watch(datePickerNotifierProvider
-        .select((value) => value.allowDisableDaySelection));
-    return SizedBox(
+    return DateSelectorView(
+      ddPicker: dateSelector.ddPicker,
+      mmPicker: dateSelector.mmPicker,
+      yyyyPicker: dateSelector.yyyyPicker,
       width: width,
       height: height,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Flexible(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  PickerView(
-                    pickerID: PickerID.datePicker,
-                    width: width * 1 / 6,
-                    height: height,
-                    itemExtent: itemExtend,
-                    bottomPadding: kMinInteractiveDimension,
-                    theme: theme,
-                    allowDisable: canDisableDay,
-                  ),
-                  PickerView(
-                    pickerID: PickerID.monthPicker,
-                    width: width * 3 / 6,
-                    height: height,
-                    itemExtent: itemExtend,
-                    bottomPadding: kMinInteractiveDimension,
-                    theme: theme,
-                    allowDisable: false,
-                  ),
-                  PickerView(
-                    pickerID: PickerID.yearPicker,
-                    width: width * 2 / 6,
-                    height: height,
-                    itemExtent: itemExtend,
-                    bottomPadding: kMinInteractiveDimension,
-                    theme: theme,
-                    allowDisable: canDisableYear,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: kMinInteractiveDimension,
-              width: width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MenuItem(
-                    tooltip: 'Enable/Disable Day Selection',
-                    iconData: Icons.toggle_off,
-                    iconColor: theme.iconColor,
-                    width: width / 6,
-                    onTap: () => ref
-                        .read(datePickerNotifierProvider.notifier)
-                        .toggleDisable(pickerID: PickerID.datePicker),
-                  ),
-                  MenuItem(
-                    tooltip: 'Restore',
-                    iconData: Icons.restart_alt,
-                    iconColor: theme.iconColor,
-                    width: width * 3 / 6,
-                    onTap: () =>
-                        ref.read(datePickerNotifierProvider.notifier).onReset(),
-                  ),
-                  MenuItem(
-                    tooltip: 'Enable/Disable Year Selection',
-                    iconData: Icons.toggle_on,
-                    iconColor: theme.iconColor,
-                    width: width * 2 / 6,
-                    onTap: () => ref
-                        .read(datePickerNotifierProvider.notifier)
-                        .toggleDisable(pickerID: PickerID.yearPicker),
-                  ),
-                ]
-                    .map((e) =>
-                        SizedBox(width: e.width, child: MenuItemView(item: e)))
-                    .toList(),
-              ),
-            )
-          ],
-        ),
-      ),
+      itemExtend: itemExtend ?? width / 6,
+      theme: dateSelectorThemeData ?? defaultTheme,
+      onSelection: ({required int index, required PickerID pickerID}) {
+        onDateChanged(dateSelector.onChange(pickerID, index).ddmmyyyy);
+      },
+      onToggleDisable: ({required PickerID pickerID}) {
+        onDateChanged(dateSelector.toggleDisable(pickerID).ddmmyyyy);
+      },
+      onReset: onReset,
     );
   }
 }

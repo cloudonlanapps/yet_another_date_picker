@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 enum PickerID {
-  datePicker,
-  monthPicker,
-  yearPicker,
+  ddPicker,
+  mmPicker,
+  yyyyPicker,
 }
 
+@immutable
 class Selector<T> {
   final PickerID pickerID;
   final int index;
@@ -15,7 +16,7 @@ class Selector<T> {
   final String Function(T value) toStringFormatted;
   final bool isDisabled;
 
-  Selector._({
+  const Selector._({
     required this.pickerID,
     required this.index,
     required this.items,
@@ -86,6 +87,6 @@ class Selector<T> {
 
   @override
   String toString() {
-    return 'Selector(pickerID: $pickerID, index: $index, items: $items, toStringFormatted: $toStringFormatted, isDisabled: $isDisabled)';
+    return 'Selector(pickerID: $pickerID, index: $index, isDisabled: $isDisabled)';
   }
 }

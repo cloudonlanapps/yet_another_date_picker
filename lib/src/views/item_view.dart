@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class ItemView extends StatelessWidget {
   const ItemView({
-    Key? key,
+    super.key,
     required this.label,
     required this.backgroundColor,
     required this.textStyle,
-  }) : super(key: key);
+  });
 
   final String label;
   final Color backgroundColor;

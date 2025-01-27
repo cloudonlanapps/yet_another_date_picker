@@ -1,38 +1,34 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/picker.dart';
-import '../provider/date_picker.dart';
+
 import '../themedata.dart';
 import 'list_wheel.dart';
 
-class PickerView extends ConsumerWidget {
-  const PickerView({
-    super.key,
-    required this.pickerID,
-    required this.height,
-    required this.width,
-    required this.itemExtent,
-    required this.bottomPadding,
-    required this.theme,
-    required this.allowDisable,
-  });
+class PickerView extends StatelessWidget {
+  const PickerView(
+      {super.key,
+      required this.picker,
+      required this.height,
+      required this.width,
+      required this.itemExtent,
+      required this.bottomPadding,
+      required this.theme,
+      required this.onSelection});
 
-  final PickerID pickerID;
+  final Selector picker;
   final double height;
   final double width;
   final double itemExtent;
 
   final double bottomPadding;
   final DateSelectorThemeData theme;
-  final bool allowDisable;
+
+  final void Function({required int index, required PickerID pickerID})
+      onSelection;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final Selector picker = ref.watch(
-        datePickerNotifierProvider.select((value) => value.pickers[pickerID]!));
+  Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       picker.scrollTo();
     });
@@ -46,7 +42,7 @@ class PickerView extends ConsumerWidget {
             width: width,
             height: height,
             itemExtent: itemExtent,
-            onSelection: ref.read(datePickerNotifierProvider.notifier).onChange,
+            onSelection: onSelection,
             theme: theme,
           ),
           if (picker.isDisabled)
@@ -59,7 +55,7 @@ class PickerView extends ConsumerWidget {
                 child: RotatedBox(
                     quarterTurns: -1,
                     child: Text(
-                      "Any ${picker.pickerID == PickerID.datePicker ? "Day" : "Year"}",
+                      "Any ${picker.pickerID == PickerID.ddPicker ? "Day" : "Year"}",
                       style: theme.textStyleSelected,
                     )),
               ),
