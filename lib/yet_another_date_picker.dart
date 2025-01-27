@@ -1,4 +1,4 @@
-library yet_another_date_picker;
+library;
 
 export 'src/date_selector.dart';
 export 'src/ddmmyyyy.dart';

@@ -78,7 +78,7 @@ class ListWheel extends ConsumerWidget {
                     label: picker.labels[myIndex],
                   ),
                 );
-              }).toList()
+              })
             ])),
       ),
     );
