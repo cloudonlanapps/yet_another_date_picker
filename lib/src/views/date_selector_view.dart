@@ -41,9 +41,11 @@ class DateSelectorView extends StatelessWidget {
       height: height,
       child: FittedBox(
         fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               child: Row(
