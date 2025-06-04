@@ -61,7 +61,7 @@ class Selector<T> {
     return p;
   }
 
-  scrollTo({bool animate = false}) {
+  void scrollTo({bool animate = false}) {
     if (index == controller.selectedItem) return;
     if (animate) {
       controller.animateToItem(index,
